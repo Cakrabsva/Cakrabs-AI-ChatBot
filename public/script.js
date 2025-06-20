@@ -1,12 +1,11 @@
-'use strict'; // Keep your strict mode
-
+'use strict';
 const chatBox = document.getElementById('chat-box');
 const userInput = document.getElementById('user-input');
 const sendButton = document.getElementById('send-button');
 const loadingSpinner = document.getElementById('loading-spinner');
 
-const backendBaseUrl = 'http://localhost:3000/api';
-let currentUserId = null; // To store the unique ID for the current user's session
+const backendBaseUrl = '/api';
+let currentUserId = null;
 
 function generateUniqueId() {
     return 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
@@ -16,13 +15,13 @@ function addMessage(text, sender) {
     const messageDiv = document.createElement('div');
     messageDiv.classList.add('message');
     messageDiv.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
-    messageDiv.innerHTML = text.replace(/\n/g, '<br>'); // Handle newlines
+    messageDiv.innerHTML = text.replace(/\n/g, '<br>');
     chatBox.appendChild(messageDiv);
-    chatBox.scrollTop = chatBox.scrollHeight; // Scroll to bottom
+    chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 async function startChatSession() {
-    currentUserId = generateUniqueId(); // Create a new unique ID for each user/session
+    currentUserId = generateUniqueId();
     try {
         const response = await fetch(`${backendBaseUrl}/start-chat`, {
             method: 'POST',
@@ -41,7 +40,7 @@ async function startChatSession() {
         addMessage(data.initialBotMessage, 'bot');
         userInput.disabled = false;
         sendButton.disabled = false;
-        userInput.focus(); // Focus on input field
+        userInput.focus();
 
     } catch (error) {
         console.error('Error starting chat session:', error);
@@ -56,10 +55,10 @@ async function sendMessage() {
     if (message === '' || !currentUserId) return;
 
     addMessage(message, 'user');
-    userInput.value = ''; // Clear input
-    userInput.disabled = true; // Disable input while waiting for response
+    userInput.value = '';
+    userInput.disabled = true;
     sendButton.disabled = true;
-    loadingSpinner.style.display = 'block'; // Show typing indicator
+    loadingSpinner.style.display = 'block';
 
     try {
         const response = await fetch(`${backendBaseUrl}/chat`, {
@@ -75,34 +74,30 @@ async function sendMessage() {
         if (!response.ok) {
             if (data.restartChat) {
                   addMessage(data.error + " Starting a new conversation.", 'bot');
-                  // Clear chat box for a fresh start
                   chatBox.innerHTML = ''; 
-                  await startChatSession(); // Restart the session
+                  await startChatSession();
             } else {
                 throw new Error(data.error || `HTTP error! status: ${response.status}`);
             }
         } else {
-            addMessage(data.output, 'bot'); // Use 'output' as per your backend response
+            addMessage(data.output, 'bot');
         }
 
     } catch (error) {
         console.error('Error sending message:', error);
         addMessage(`Sorry, there was an issue: ${error.message}. Please try again.`, 'bot');
     } finally {
-        userInput.disabled = false; // Re-enable input
+        userInput.disabled = false;
         sendButton.disabled = false;
-        loadingSpinner.style.display = 'none'; // Hide typing indicator
-        userInput.focus(); // Focus on input for next message
+        loadingSpinner.style.display = 'none';
+        userInput.focus();
     }
 }
 
-// Event Listeners
 sendButton.addEventListener('click', sendMessage);
 userInput.addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
         sendMessage();
     }
   });
-          
-// Start a new chat session when the page loads
 window.addEventListener('load', startChatSession);

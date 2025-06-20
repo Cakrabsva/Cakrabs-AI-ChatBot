@@ -28,9 +28,9 @@
     flex-grow: 1;
     padding: 15px;
     overflow-y: auto;
-    max-height: 400px; /* Limit chat box height */
+    max-height: 400px; 
     border-bottom: 1px solid #eee;
-    display: flex; /* Use flexbox for messages */
+    display: flex;
     flex-direction: column;
 }
 .message {
@@ -38,17 +38,17 @@
     padding: 8px 12px;
     border-radius: 15px;
     max-width: 80%;
-    word-wrap: break-word; /* Ensure long words break */
+    word-wrap: break-word;
 }
 .user-message {
     background-color: #e6f7ff;
-    align-self: flex-end; /* Align to the right */
-    margin-left: auto; /* Push to the right */
+    align-self: flex-end; 
+    margin-left: auto;
 }
 .bot-message {
     background-color: #f0f0f0;
-    align-self: flex-start; /* Align to the left */
-    margin-right: auto; /* Push to the left */
+    align-self: flex-start;
+    margin-right: auto;
 }
 .chat-input {
     display: flex;
