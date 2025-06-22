@@ -7,7 +7,6 @@ import {GoogleGenerativeAI} from '@google/generative-ai'
 
 dotenv.config()
 
-
 const app = express()
 const port = process.env.PORT || 3000
 
@@ -23,7 +22,6 @@ const chatSessions = new Map();
 app.post('/api/start-chat', async (req, res) => {
     const userId = req.body.userId || `user-${Date.now()}`;
 
-    
     try {
         const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' }); 
 
